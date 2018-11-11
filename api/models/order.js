@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 
 //this is schema, (how the model is built)
 const orderSchema = mongoose.Schema({
+
     _id: mongoose.Schema.Types.ObjectId, 
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-    quantity: { type: Number, default: 1 }
+    quantity: { type: Number, default: 1 },
+    test: { type: Number, default 1 }
 })
-
+// test git. to upload.
 module.exports = mongoose.model('Order', orderSchema);
