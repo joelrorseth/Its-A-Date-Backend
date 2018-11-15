@@ -4,8 +4,35 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
+exports.users_get_all = (req, res, next) => {
+  console.log("get all");
+  User.find()
+    .select("email _id")
+    .exec()
+    .then(docs => {
+      res.status(200).json({
+        count: docs.length,
+        users: docs.map(doc => {
+          return {
+            _id: doc._id,
+            email: doc.email
+            // request: {
+            //   type: "GET",
+            //   url: "http://localhost:3000/orders/" + doc._id
+            // }
+          };
+        })
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
+};
+
 exports.user_signup = (req, res, next) => {
-      //check to see if user is in the DB
+    //check to see if user is in the DB
     //when using find like this...
     /* FIND WILL RETURN AN EMPTY ARRAY!!! NOT NULL */
   User.find({ email: req.body.email })
