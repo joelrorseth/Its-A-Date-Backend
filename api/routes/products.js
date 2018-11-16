@@ -5,6 +5,8 @@ const multer = require('multer');
 const checkAuth = require('../middleware/check-auth');
 const ProductsController = require('../controllers/products');
 
+
+//used to upload files to local storage
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
         cb(null, './uploads/'); // first element is the error (no error if uploads!)
