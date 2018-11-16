@@ -1,17 +1,22 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const bodyParser = require('body-parser');
 const User = require("../models/user");
 
 
-/**
- *  return list of all users
- **/
+/********************************
+ * Gets All users
+ * RETURNS:
+ *  User: ARRAY of all users with all details except password
+ *  Count: length of the array
+ *  Message
+ *  Error upon failure
+ ********************************/
 exports.users_get_all = (req, res, next) => {
-  console.log("get all");
+  //console.log("get all");
   User.find()
-    .select("email _id")
+    .select("email _id userName phone nameFirst nameLast gender sexualOrientation relationshipStatus city age")
     .exec()
     .then(docs => {
       res.status(200).json({
@@ -19,12 +24,20 @@ exports.users_get_all = (req, res, next) => {
         users: docs.map(doc => {
           return {
             _id: doc._id,
-            email: doc.email
-
-            // request: {
-            //   type: "GET",
-            //   url: "http://localhost:3000/orders/" + doc._id
-            // }
+            email: doc.email,
+            userName: doc.userName,
+            phone: doc.phone,
+            nameFirst: doc.nameFirst,
+            nameLast: doc.nameLast,
+            gender: doc.gender,
+            sexualOrientation: doc.sexualOrientation,
+            relationshipStatus: doc.relationshipStatus,
+            city: doc.city,
+            age: doc.age,
+            request: {
+              type: "GET",
+              url: "http://localhost:3000/user/" + doc._id
+            }
           };
         })
       });
@@ -36,16 +49,20 @@ exports.users_get_all = (req, res, next) => {
     });
 };
 
+
+/********************************
+ * Gets single user details
+ * RETURNS:
+ *  User: ARRAY with one user 
+ *  Message
+ *  Error upon failure
+ ********************************/
 exports.userDetail = (req, res, next) => {
-  //check to see if user is in the DB
-  //when using find like this...
-  /* FIND WILL RETURN AN EMPTY ARRAY!!! NOT NULL */
-  User.find({ userName: req.body.userName })
+  User.find({ _id: req.params.userId })
     .select("_id userName email nameFirst nameLast phone gender sexualOrientation relationshipStatus age city")
     .exec()
     .then(user => {
-      console.log(req.params.userName);
-      console.log(req.body.userName + " is body username");
+      console.log(req.params.userId);
       console.log(user);
       // CHECK IF ARRAY IS >= 1
       if (user.length >= 1) {
@@ -60,14 +77,20 @@ exports.userDetail = (req, res, next) => {
       res.status(500).json({
         error: err
       });
-    });
+  });
 };
 
 
 
-/**
+/*****************************************
  * Create a user account
- **/
+ * RETURNS
+ *  message
+ *  error upon failure
+ * NOTE
+ *  doesn't automatically sign user in. 
+ *  user required to sign in after.
+ *****************************************/
 exports.createAccount = (req, res, next) => {
     //check to see if user is in the DB
     //when using find like this...
@@ -108,7 +131,6 @@ exports.createAccount = (req, res, next) => {
                 relationshipStatus: "",
                 city: "",
                 age: ""
-
               });
               user
                 .save()
@@ -131,8 +153,19 @@ exports.createAccount = (req, res, next) => {
     });
 };
 
+
+/*****************************************
+ * User log in
+ * RETURNS
+ *  message
+ *  token for session on server (2hr expiry)
+ *  error upon failure
+ * NOTE
+ *  doesn't automatically sign user in. 
+ *  user required to sign in after.
+ *****************************************/
 exports.user_login = (req, res, next) => {
-  User.find({ email: req.body.email })
+  User.find({ userName: req.body.userName })
     .exec()
     .then(user => {
       if (user.length < 1) {
@@ -156,7 +189,7 @@ exports.user_login = (req, res, next) => {
             },
             process.env.JWT_KEY,
             {
-              expiresIn: "1h"
+              expiresIn: "2h"
             }
           );
           return res.status(200).json({
@@ -176,6 +209,65 @@ exports.user_login = (req, res, next) => {
       });
     });
 };
+
+
+/*****************************************
+ * User log in
+ * RETURNS
+ *  message
+ *  token for session on server (2hr expiry)
+ *  error upon failure
+ * NOTE
+ *  doesn't automatically sign user in. 
+ *  user required to sign in after.
+ *****************************************/
+exports.update_user = (req, res, next) => {
+  const id = req.params.userId;
+  // set up the update object
+  //console.log(req.body);
+  //console.log(req.params);
+  const updateduser = new User({
+      userName: req.body.userName,
+      phone: req.body.phone,
+      nameFirst: req.body.nameFirst,
+      nameLast: req.body.nameLast,
+      gender: req.body.gender,
+      sexualOrientation: req.body.sexualOrientation,
+      relationshipStatus: req.body.relationshipStatus,
+      city: req.body.city,
+      age: req.body.age
+  });
+
+  User.findByIdAndUpdate( id,  updateduser )
+    .exec()
+    .then(result => {
+      res.status(200).json({
+          result: result,
+          message: "User updated",
+          request: {
+            type: "GET",
+            url: "http://localhost:3000/user/" + id
+        }
+      })
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
+      });
+    });
+};
+
+/*****************************************
+ * Delete User
+ * RETURNS
+ *  message
+ *  error upon failure
+ * RESTRICTIONS
+ *  requires user to be signed in,
+ *  will eventually have more restrictions
+ *  imposed, ie- user level etc.
+ *****************************************/
 
 exports.user_delete = (req, res, next) => {
   User.remove({ _id: req.params.userId })  // use userId since that is param specified in function call from Routes/user.js

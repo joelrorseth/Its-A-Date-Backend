@@ -4,32 +4,80 @@ const router = express.Router();
 const UserController = require('../controllers/user');
 const checkAuth = require('../middleware/check-auth');
 
-// 
-// return list of all users
+/******************************************
+* Get all users
+* Method:
+*   GET
+* Input:
+*   Nothing
+* Usage:
+*   ie- localhost:3000/user/
+*******************************************/
 router.get("/", UserController.users_get_all);
 
-//******************************
-// get single user info, only after sucessful login
-//****************************** */
+
+/******************************************
+* Get single user
+* Method:
+*   GET
+* Input:
+*   user._id as a parameter in url.
+* Usage:
+*   ie- localhost:3000/user/5beee3e0a0539d08981a2707
+*******************************************/
 router.get("/:userId", UserController.userDetail);
 
-//******************************
-// create a user account
-// Requirements: 
-//      username: String, 
-//      email: String,
-//      password: String
-// Restrictions:
-//  --> duplication check against email
-//  --> duplication check against username
-//****************************** */
+
+
+/******************************************
+* create a user account
+* Method:
+*   POST
+* Requirements: 
+*      username: String, 
+*      email: String,
+*      password: String
+* Restrictions:
+*  --> duplication check against email
+*  --> duplication check against username
+* Usage:
+*   ie- localhost:3000/user/createAccount
+*******************************************/
 router.post("/createAccount", UserController.createAccount);
 
-//****************************** */
-// login function
-// requires 
+
+
+/******************************************
+* User login
+* Method:
+*   POST
+* Input:
+*   user._id as a parameter in url. 
+* Usage:
+*   ie- localhost:3000/user/login
+*******************************************/
 router.post("/login", UserController.user_login);
 
-router.delete("/:userId", checkAuth, UserController.user_delete);
+
+/******************************************
+* Update single user
+* Method:
+*   PATCH
+* Input:
+*   user._id as a parameter in url. 
+*   ie- localhost:3000/user/5beee3e0a0539d08981a2707
+*******************************************/
+router.patch('/:userId', UserController.update_user);
+
+
+/******************************************
+* Delete single user
+* Method:
+*   DELETE
+* Input:
+*   user._id as a parameter in url. 
+*   ie- localhost:3000/user/5beee3e0a0539d08981a2707
+*******************************************/
+router.delete("/:userId", UserController.user_delete);
 
 module.exports = router;
