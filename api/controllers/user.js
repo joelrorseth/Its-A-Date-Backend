@@ -289,7 +289,8 @@ exports.update_user = (req, res, next) => {
       sexualOrientation: req.body.sexualOrientation,
       relationshipStatus: req.body.relationshipStatus,
       city: req.body.city,
-      age: req.body.age
+      age: req.body.age,
+      dateUpdated: req.currentDateTime
   });
   //console.log(updateduser);
   //console.log(id + " is id ");
