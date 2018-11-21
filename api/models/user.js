@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-//this is schema, (how the model is built)
+//user schema
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId, 
     email: { 

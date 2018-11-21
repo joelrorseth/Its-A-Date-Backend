@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-//this is schema, (how the model is built)
+//date Schema
 const dateSchema = mongoose.Schema({
 
     _id: mongoose.Schema.Types.ObjectId, 
