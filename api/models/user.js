@@ -20,7 +20,10 @@ const userSchema = mongoose.Schema({
     sexualOrientation: { type: String, required: false },
     relationshipStatus: { type: String, required: false },
     city: {type: String, required: false },
-    age: { type: Number, required: false }
+    age: { type: Number, required: false },
+    dateCreated: { type: String, required: true },
+    dateUpdated: { type: String, required: true },
+    dateLastLogin: {type: String, required: true }
 
 })
 

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const dateTime = require('../middleware/dateTime');
 
 const UserController = require('../controllers/user');
 const checkAuth = require('../middleware/check-auth');
@@ -14,6 +15,18 @@ const checkAuth = require('../middleware/check-auth');
 *   ie- localhost:3000/user/
 *******************************************/
 router.get("/", UserController.users_get_all);
+
+
+/******************************************
+* Get all users by location
+* Method:
+*   GET
+* Input:
+*   location
+* Usage:
+*   ie- localhost:3000/user/usersLocation
+*******************************************/
+router.get("/usersLocation", UserController.users_get_all_by_location);
 
 
 /******************************************
@@ -37,26 +50,28 @@ router.get("/:userId", UserController.userDetail);
 *      username: String, 
 *      email: String,
 *      password: String
+* Middleware:
+*   dateTime -> provides req.currentDateTime value
 * Restrictions:
 *  --> duplication check against email
 *  --> duplication check against username
 * Usage:
 *   ie- localhost:3000/user/createAccount
 *******************************************/
-router.post("/createAccount", UserController.createAccount);
-
-
+router.post("/createAccount", dateTime, UserController.createAccount);
 
 /******************************************
 * User login
 * Method:
 *   POST
 * Input:
-*   user._id as a parameter in url. 
+*   
+* Middleware:
+*   dateTime -> provides req.currentDateTime value 
 * Usage:
 *   ie- localhost:3000/user/login
 *******************************************/
-router.post("/login", UserController.user_login);
+router.post("/login", dateTime, UserController.user_login);
 
 
 /******************************************
@@ -64,10 +79,13 @@ router.post("/login", UserController.user_login);
 * Method:
 *   PATCH
 * Input:
-*   user._id as a parameter in url. 
+*   user._id as a parameter in url.
+* Middleware:
+*   dateTime -> provides req.currentDateTime value
+* Usage:
 *   ie- localhost:3000/user/5beee3e0a0539d08981a2707
 *******************************************/
-router.patch('/:userId', UserController.update_user);
+router.patch('/:userId', dateTime, UserController.update_user);
 
 
 /******************************************
@@ -75,7 +93,16 @@ router.patch('/:userId', UserController.update_user);
 * Method:
 *   DELETE
 * Input:
-*   user._id as a parameter in url. 
+*   user._id as a parameter in url.
+* RESTRICTIONS
+*  requires user to be signed in,
+*  *** token is required to be sent in headers ****
+*  will eventually have more restrictions
+*  imposed, ie- user level etc.
+* Usage: 
+*   header value:
+*   key: Authorization value: Bearer theTokenValue
+*   url:
 *   ie- localhost:3000/user/5beee3e0a0539d08981a2707
 *******************************************/
 router.delete("/:userId", checkAuth, UserController.user_delete);

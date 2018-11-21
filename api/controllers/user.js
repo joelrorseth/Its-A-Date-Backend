@@ -16,7 +16,7 @@ const User = require("../models/user");
 exports.users_get_all = (req, res, next) => {
   //console.log("get all");
   User.find()
-    .select("email _id userName phone nameFirst nameLast gender sexualOrientation relationshipStatus city age")
+    .select("email _id userName phone nameFirst nameLast gender sexualOrientation relationshipStatus city age dateCreated dateUpdated dateLastLogin")
     .exec()
     .then(docs => {
       res.status(200).json({
@@ -34,6 +34,9 @@ exports.users_get_all = (req, res, next) => {
             relationshipStatus: doc.relationshipStatus,
             city: doc.city,
             age: doc.age,
+            dateCreated: doc.dateCreated,
+            dateUpdated: doc.dateUpdated,
+            dateLastLogin: doc.dateLastLogin,
             request: {
               type: "GET",
               url: "http://localhost:3000/user/" + doc._id
@@ -58,8 +61,9 @@ exports.users_get_all = (req, res, next) => {
  *  Error upon failure
  ********************************/
 exports.userDetail = (req, res, next) => {
+  //console.log("user by id single.");
   User.find({ _id: req.params.userId })
-    .select("_id userName email nameFirst nameLast phone gender sexualOrientation relationshipStatus age city")
+    .select("_id userName email nameFirst nameLast phone gender sexualOrientation relationshipStatus age city dateCreated dateUpdated dateLastLogin")
     .exec()
     .then(user => {
       console.log(req.params.userId);
@@ -80,7 +84,52 @@ exports.userDetail = (req, res, next) => {
   });
 };
 
-
+/********************************
+ * Gets All users BY LOCATION
+ * RETURNS:
+ *  User: ARRAY of all users with all details except password
+ *  Count: length of the array
+ *  Message
+ *  Error upon failure
+ ********************************/
+exports.users_get_all_by_location = (req, res, next) => {
+  console.log("get all by location");
+  User.find({city: req.body.city})
+    .select("email _id userName phone nameFirst nameLast gender sexualOrientation relationshipStatus city age dateCreated dateUpdated dateLastLogin")
+    .exec()
+    .then(docs => {
+      res.status(200).json({
+        count: docs.length,
+        users: docs.map(doc => {
+          return {
+            _id: doc._id,
+            email: doc.email,
+            userName: doc.userName,
+            phone: doc.phone,
+            nameFirst: doc.nameFirst,
+            nameLast: doc.nameLast,
+            gender: doc.gender,
+            sexualOrientation: doc.sexualOrientation,
+            relationshipStatus: doc.relationshipStatus,
+            city: doc.city,
+            age: doc.age,
+            dateCreated: doc.dateCreated,
+            dateUpdated: doc.dateUpdated,
+            dateLastLogin: doc.dateLastLogin,
+            request: {
+              type: "GET",
+              url: "http://localhost:3000/user/" + doc._id
+            }
+          };
+        })
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
+};
 
 /*****************************************
  * Create a user account
@@ -130,7 +179,11 @@ exports.createAccount = (req, res, next) => {
                 sexualOrientation: "",
                 relationshipStatus: "",
                 city: "",
-                age: ""
+                age: "",
+                dateCreated: req.currentDateTime,
+                dateUpdated: req.currentDateTime,
+                dateLastLogin: req.currentDateTime,
+
               });
               user
                 .save()
@@ -173,7 +226,7 @@ exports.user_login = (req, res, next) => {
           message: "Auth failed"
         });
       }
-      console.log(user);
+      //console.log(user);
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (err) {
           return res.status(401).json({
@@ -192,42 +245,43 @@ exports.user_login = (req, res, next) => {
               expiresIn: "2h"
             }
           );
-          return res.status(200).json({
-            message: "Auth successful",
-            token: token
+          const updateduser = new User({
+            dateLastLogin: req.currentDateTime
           });
-        }
-        res.status(401).json({
-          message: "Auth failed"
-        });
+          // update login field for user.
+          User.findByIdAndUpdate( user[0]._id,  updateduser )
+            .exec()
+            .then(result => {
+              console.log(result);
+              return res.status(200).json({
+                message: "Auth successful",
+                //user: result,   // used for testing. don't send back all user info.
+                token: token
+              });
+            })
+            .catch(err =>{
+              res.status(401).json({
+                err: err,
+                message: "Auth failed"
+              });
+            });  
+          }
       });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({
-        error: err
-      });
-    });
+  });
 };
 
 
 /*****************************************
- * User log in
+ * Update a user by _id
  * RETURNS
  *  message
- *  token for session on server (2hr expiry)
+ *  updated user information
  *  error upon failure
- * NOTE
- *  doesn't automatically sign user in. 
- *  user required to sign in after.
  *****************************************/
 exports.update_user = (req, res, next) => {
   const id = req.params.userId;
   // set up the update object
-  //console.log(req.body);
-  //console.log(req.params);
   const updateduser = new User({
-      userName: req.body.userName,
       phone: req.body.phone,
       nameFirst: req.body.nameFirst,
       nameLast: req.body.nameLast,
@@ -237,25 +291,46 @@ exports.update_user = (req, res, next) => {
       city: req.body.city,
       age: req.body.age
   });
-
+  //console.log(updateduser);
+  //console.log(id + " is id ");
+      /* trying to sort this out but not getting it to work properly.*/
+  // try{
+  // User.findOneAndUpdate(
+  //   {"id": id },
+  //   { $set: { "phone" : updateduser.phone, "gender" : updateduser.gender } },
+  //   { returnNewDocument: true }
+  //   );
+  // }
+  // catch(e){
+  //   print(e);
+  // }
+  /* deprecated function */
   User.findByIdAndUpdate( id,  updateduser )
     .exec()
     .then(result => {
-      res.status(200).json({
-          result: result,
-          message: "User updated",
-          request: {
-            type: "GET",
-            url: "http://localhost:3000/user/" + id
-        }
-      })
+      User.find({ _id: result._id })
+        .select("_id userName email nameFirst nameLast phone gender sexualOrientation relationshipStatus age city")
+        .exec()
+        .then(user => {
+          // CHECK IF ARRAY IS >= 1
+          if (user.length >= 1) {
+            return res.status(200).json({
+              user: user,
+              message: "User updated",
+              request: {
+                type: "GET",
+                url: "http://localhost:3000/user/" + id 
+              }
+            });
+          } 
+        })
     })
     .catch(err => {
       console.log(err);
       res.status(500).json({
         error: err
       });
-    });
+    }); 
 };
 
 /*****************************************

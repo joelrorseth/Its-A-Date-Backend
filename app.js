@@ -16,9 +16,9 @@ const mongoose = require('mongoose');       // use mongoose for working with mon
     We disable this mechanism by sending headers to browser. 
 */
 
-const productRoutes = require('./api/routes/products');
-const orderRoutes = require('./api/routes/orders');
+
 const userRoutes = require('./api/routes/user');
+const dateRoutes = require('./api/routes/dates');
 
 mongoose.connect(
     'mongodb://shop-test:' + 
@@ -61,9 +61,8 @@ app.use((req, res, next) => {
  });
 
 // routes that handle requests
-app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
 app.use('/user', userRoutes);
+app.use('/dates', dateRoutes);
 
 // set up error handling, don't use first param so it catches everything.
 app.use((req, res, next) => {
