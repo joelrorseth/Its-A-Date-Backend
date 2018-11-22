@@ -106,5 +106,5 @@ router.patch('/:userId', dateTime, UserController.update_user);
 *   ie- localhost:3000/user/5beee3e0a0539d08981a2707
 *******************************************/
 router.delete("/:userId", checkAuth, UserController.user_delete);
-
+//router.delete("/:userId", UserController.user_delete);
 module.exports = router;

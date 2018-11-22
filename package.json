@@ -12,7 +12,7 @@
     "Date",
     "Best evah"
   ],
-  "author": "Ryan Pearson",
+  "author": "Ryan Pearson, Mike Melanson",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.2",
