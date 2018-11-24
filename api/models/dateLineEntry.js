@@ -6,7 +6,7 @@ const dateLineEntrySchema = mongoose.Schema({
 
     _id: mongoose.Schema.Types.ObjectId, 
     date: { type: mongoose.Schema.Types.ObjectId, ref: 'Date', required: true },
-    lcoation: { type: mongoose.Schema.Types.ObjectId, ref: 'Location', required: true },
+    location: { type: mongoose.Schema.Types.ObjectId, ref: 'Location', required: true },
     name: { type: String, required: true },
     comments: { type: String, required: true },
     rating: { type: String, required: true },
