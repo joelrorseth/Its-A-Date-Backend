@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema({
     // unique helps with performance and search items.
     password: { type: String, required: true},
     userName: { type: String, required: true},
+    bio: {type: String, required: false },
     phone: { type: String, required: false },
     nameFirst: { type: String, required: false },
     nameLast: { type: String, required: false },

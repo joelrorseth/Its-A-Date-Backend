@@ -24,7 +24,9 @@ exports.dates_create_date = (req, res, next) => {
       }
       const date = new myDate({
         _id: mongoose.Types.ObjectId(),
+        name: req.body.name,
         comments: req.body.comments,
+        city: req.body.city,
         dateCreated: req.currentDateTime,
         dateUpdated: req.currentDateTime,
         user: req.body._id
@@ -62,7 +64,7 @@ exports.dates_create_date = (req, res, next) => {
 exports.dates_get_all = (req, res, next) => {
   console.log(req.currentDateTime);
   myDate.find()
-    .select("user _id comments dateCreated dateUpdated")
+    .select("user _id name city comments dateCreated dateUpdated")
     .populate("user", "_id userName email nameFirst nameLast" )
     .exec()
     .then(docs => {
@@ -72,6 +74,8 @@ exports.dates_get_all = (req, res, next) => {
           return {
             _id: doc._id,
             user: doc.user,
+            name: doc.name,
+            city: doc.city,
             comments: doc.comments,
             dateCreated: doc.dateCreated,
             dateUpdated: doc.dateUpdated,
@@ -102,7 +106,7 @@ exports.dates_get_all = (req, res, next) => {
  *****************************************/
 exports.dates_get_date = (req, res, next) => {
   myDate.findById(req.params.dateId)
-    .populate("user", "_id userName email nameFirst nameLast")
+    .populate("user", "_id userName name city email nameFirst nameLast")
     .exec()
     .then(date => {
       if (!date) {

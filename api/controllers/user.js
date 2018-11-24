@@ -16,7 +16,7 @@ const User = require("../models/user");
 exports.users_get_all = (req, res, next) => {
   //console.log("get all");
   User.find()
-    .select("email _id userName phone nameFirst nameLast gender sexualOrientation relationshipStatus city age dateCreated dateUpdated dateLastLogin")
+    .select("email _id userName phone nameFirst nameLast bio gender sexualOrientation relationshipStatus city age dateCreated dateUpdated dateLastLogin")
     .exec()
     .then(docs => {
       res.status(200).json({
@@ -29,6 +29,7 @@ exports.users_get_all = (req, res, next) => {
             phone: doc.phone,
             nameFirst: doc.nameFirst,
             nameLast: doc.nameLast,
+            bio: doc.bio,
             gender: doc.gender,
             sexualOrientation: doc.sexualOrientation,
             relationshipStatus: doc.relationshipStatus,
@@ -63,7 +64,7 @@ exports.users_get_all = (req, res, next) => {
 exports.userDetail = (req, res, next) => {
   //console.log("user by id single.");
   User.find({ _id: req.params.userId })
-    .select("_id userName email nameFirst nameLast phone gender sexualOrientation relationshipStatus age city dateCreated dateUpdated dateLastLogin")
+    .select("_id userName email nameFirst nameLast bio phone gender sexualOrientation relationshipStatus age city dateCreated dateUpdated dateLastLogin")
     .exec()
     .then(user => {
       console.log(req.params.userId);
@@ -95,7 +96,7 @@ exports.userDetail = (req, res, next) => {
 exports.users_get_all_by_location = (req, res, next) => {
   console.log("get all by location");
   User.find({city: req.body.city})
-    .select("email _id userName phone nameFirst nameLast gender sexualOrientation relationshipStatus city age dateCreated dateUpdated dateLastLogin")
+    .select("email _id userName phone nameFirst nameLast bio gender sexualOrientation relationshipStatus city age dateCreated dateUpdated dateLastLogin")
     .exec()
     .then(docs => {
       res.status(200).json({
@@ -106,6 +107,7 @@ exports.users_get_all_by_location = (req, res, next) => {
             email: doc.email,
             userName: doc.userName,
             phone: doc.phone,
+            bio: doc.bio,
             nameFirst: doc.nameFirst,
             nameLast: doc.nameLast,
             gender: doc.gender,
@@ -173,6 +175,7 @@ exports.createAccount = (req, res, next) => {
                 userName: req.body.userName,
                 password: hash,
                 phone: "",
+                bio: "",
                 nameFirst: "",
                 nameLast: "",
                 gender: "",
@@ -283,6 +286,7 @@ exports.update_user = (req, res, next) => {
   // set up the update object
   const updateduser = new User({
       phone: req.body.phone,
+      bio: req.body.bio,
       nameFirst: req.body.nameFirst,
       nameLast: req.body.nameLast,
       gender: req.body.gender,
@@ -310,7 +314,7 @@ exports.update_user = (req, res, next) => {
     .exec()
     .then(result => {
       User.find({ _id: result._id })
-        .select("_id userName email nameFirst nameLast phone gender sexualOrientation relationshipStatus age city")
+        .select("_id userName email nameFirst nameLast bio phone gender sexualOrientation relationshipStatus age city")
         .exec()
         .then(user => {
           // CHECK IF ARRAY IS >= 1
