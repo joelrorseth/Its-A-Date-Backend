@@ -30,8 +30,8 @@ exports.dateLineEntry_create = (req, res, next) => {
         .then(result1 => {
             //console.log(result1);
             DateLineEntry.find({date: req.body.date})
-                .select("_id date location name rating comments dateCreated dateUpdated")
-                .populate( " location ", "name address rating place_id dateCreated dateLastReferenced")
+                .select("_id date location nameDLE rating comments dateCreated dateUpdated")
+                .populate( " location ", "nameLocation address rating place_id dateCreated dateLastReferenced")
                 .exec()
                 .then(result => {
                     res.status(201).json({
@@ -69,8 +69,9 @@ exports.dateLineEntry_create = (req, res, next) => {
 exports.dateLineEntry_getEntries = (req, res, next) => {
     const date_id = req.params.dateId;
     DateLineEntry.find({date: date_id })
-    .select("_id date location name rating comments dateCreated dateUpdated")
-    .populate( " location ", "name address rating place_id dateCreated dateLastReferenced")
+    .select("_id date location nameDLE rating comments dateCreated dateUpdated")
+    .populate( "location ", "nameLocation address rating place_id dateCreated dateLastReferenced")
+    //.populate( "date ", " name comments city dateCreated dateUpdated")
     .exec()
     .then(result => {
         res.status(201).json({
@@ -102,7 +103,7 @@ exports.update_dateLineEntry = (req, res, next) => {
     const updatedDateLineEntry = new DateLineEntry({
         date: date,
         location: req.body.location,
-        name: req.body.name,
+        nameDLE: req.body.nameDLE,
         rating: req.body.rating,
         comments: req.body.comments,
         dateUpdated: req.currentDateTime
@@ -112,8 +113,8 @@ exports.update_dateLineEntry = (req, res, next) => {
       .exec()
       .then(result => {
         DateLineEntry.find({ date: date })
-          .select("_id date location name rating comments dateCreated dateUpdated")
-          .populate( " location ", "name address rating place_id dateCreated dateLastReferenced")
+          .select("_id date location nameDLE rating comments dateCreated dateUpdated")
+          .populate( " location ", "nameLocation address rating place_id dateCreated dateLastReferenced")
           .exec()
           .then(date => {
             // CHECK IF ARRAY IS >= 1

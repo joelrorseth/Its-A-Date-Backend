@@ -24,7 +24,7 @@ exports.dates_create_date = (req, res, next) => {
       }
       const date = new myDate({
         _id: mongoose.Types.ObjectId(),
-        name: req.body.name,
+        nameDate: req.body.nameDate,
         comments: req.body.comments,
         city: req.body.city,
         dateCreated: req.currentDateTime,
@@ -64,7 +64,7 @@ exports.dates_create_date = (req, res, next) => {
 exports.dates_get_all = (req, res, next) => {
   console.log(req.currentDateTime);
   myDate.find()
-    .select("user _id name city comments dateCreated dateUpdated")
+    .select("user _id nameDate city comments dateCreated dateUpdated")
     .populate("user", "_id userName email nameFirst nameLast" )
     .exec()
     .then(docs => {
@@ -74,7 +74,7 @@ exports.dates_get_all = (req, res, next) => {
           return {
             _id: doc._id,
             user: doc.user,
-            name: doc.name,
+            nameDate: doc.nameDate,
             city: doc.city,
             comments: doc.comments,
             dateCreated: doc.dateCreated,
@@ -106,7 +106,7 @@ exports.dates_get_all = (req, res, next) => {
  *****************************************/
 exports.dates_get_date = (req, res, next) => {
   myDate.findById(req.params.dateId)
-    .populate("user", "_id userName name city email nameFirst nameLast")
+    .populate("user", "_id userName nameDate city email nameFirst nameLast")
     .exec()
     .then(date => {
       if (!date) {
@@ -142,6 +142,8 @@ exports.update_date = (req, res, next) => {
   // set up the update object
   const updatedDate = new myDate({
       comments: req.body.comments,
+      nameDate: req.body.nameDate,
+      city: req.body.city,
       dateUpdated: req.currentDateTime
   });
   /* deprecated function */
@@ -149,7 +151,7 @@ exports.update_date = (req, res, next) => {
     .exec()
     .then(result => {
       myDate.find({ _id: result._id })
-        .select("_id user comments dateCreated dateUpdated")
+        .select("_id user comments nameDate city dateCreated dateUpdated")
         .populate("user", "_id userName email nameFirst nameLast")
         .exec()
         .then(date => {

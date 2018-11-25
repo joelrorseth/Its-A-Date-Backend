@@ -21,7 +21,7 @@ exports.location_get_all = (req, res, next) => {
           return {
             _id: doc._id, 
             place_id: doc.place_id,
-            name: doc.name,
+            nameLocation: doc.nameLocation,
             address: doc.address,
             rating: doc.rating,
             dateCreated: doc.dateCreated,
@@ -55,7 +55,7 @@ exports.locationDetail = (req, res, next) => {
     .exec()
     .then(result => {
       Location.find({ _id: result._id })
-        .select("_id place_id name address rating dateCreated dateLastReferenced")
+        .select("_id place_id nameLocation address rating dateCreated dateLastReferenced")
         .exec()
         .then(location => {
           // CHECK IF ARRAY IS >= 1
@@ -108,7 +108,7 @@ exports.createLocation = (req, res, next) => {
                   return {
                       _id: local._id, 
                       place_id: local.place_id,
-                      name: local.name,
+                      nameLocation: local.nameLocation,
                       address: local.address,
                       rating: local.rating,
                       dateCreated: local.dateCreated,
@@ -134,7 +134,7 @@ exports.createLocation = (req, res, next) => {
                   const addLocation = new Location({
                       _id: new mongoose.Types.ObjectId(), 
                       place_id: req.body.place_id,
-                      name: req.body.name,
+                      nameLocation: req.body.nameLocation,
                       address: req.body.address,
                       rating: req.body.rating,
                       dateCreated: req.currentDateTime,
@@ -160,7 +160,7 @@ exports.createLocation = (req, res, next) => {
               const addLocation = new Location({
                   _id: new mongoose.Types.ObjectId(), 
                   place_id: req.body.place_id,
-                  name: req.body.name,
+                  nameLocation: req.body.nameLocation,
                   address: req.body.address,
                   rating: req.body.rating,
                   dateCreated: req.currentDateTime,
