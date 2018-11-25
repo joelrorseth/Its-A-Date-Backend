@@ -221,7 +221,7 @@ exports.createAccount = (req, res, next) => {
  *  user required to sign in after.
  *****************************************/
 exports.user_login = (req, res, next) => {
-  User.find({ userName: req.body.userName })
+  User.find({ email: req.body.email })
     .exec()
     .then(user => {
       if (user.length < 1) {
