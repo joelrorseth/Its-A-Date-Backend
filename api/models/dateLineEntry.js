@@ -1,7 +1,7 @@
 //dateLineEntry model
 const mongoose = require('mongoose');
 
-//date Schema
+//dateLineEntry Schema
 const dateLineEntrySchema = mongoose.Schema({
 
     _id: mongoose.Schema.Types.ObjectId, 
@@ -9,7 +9,7 @@ const dateLineEntrySchema = mongoose.Schema({
     location: { type: mongoose.Schema.Types.ObjectId, ref: 'Location', required: true },
     name: { type: String, required: true },
     comments: { type: String, required: true },
-    rating: { type: String, required: true },
+    rating: { type: Number, required: true },
     dateCreated: {type: String, required: true },
     dateUpdated: {type: String, required: true }
 

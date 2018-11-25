@@ -20,6 +20,7 @@ const mongoose = require('mongoose');       // use mongoose for working with mon
 const userRoutes = require('./api/routes/user');
 const dateRoutes = require('./api/routes/dates');
 const locationRoutes = require('./api/routes/location');
+const dateLineEntryRoutes = require('./api/routes/dateLineEntry');
 
 mongoose.connect(
     'mongodb://shop-test:' + 
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 app.use('/user', userRoutes);
 app.use('/dates', dateRoutes);
 app.use('/location', locationRoutes);
+app.use('/dateLineEntry', dateLineEntryRoutes);
 
 // set up error handling, don't use first param so it catches everything.
 app.use((req, res, next) => {
