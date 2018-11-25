@@ -21,7 +21,7 @@ const DateLineEntryController = require('../controllers/dateLineEntry');
 * Middleware:
 *   dateTime -> provides req.currentDateTime value
 * Usage:
-*   ie- localhost:3000/location/
+*   ie- localhost:3000/dateLineEntry/
 *******************************************/
 router.post("/", dateTime, DateLineEntryController.dateLineEntry_create);
 
@@ -32,7 +32,7 @@ router.post("/", dateTime, DateLineEntryController.dateLineEntry_create);
 * Input:
 *   date._id as a parameter in url.
 * Usage:
-*   ie- localhost:3000/dates/5beee3e0a0539d08981a2707
+*   ie- localhost:3000/dateLineEntry/5beee3e0a0539d08981a2707
 *******************************************/
 router.get("/:dateId",  DateLineEntryController.dateLineEntry_getEntries);
 

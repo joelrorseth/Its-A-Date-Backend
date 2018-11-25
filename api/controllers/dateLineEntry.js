@@ -1,7 +1,6 @@
-//Entry for dates
+//dateLineEntry Controller
 const mongoose = require("mongoose");
 
-const myDate = require("../models/date");
 const DateLineEntry = require("../models/dateLineEntry");
 
 
@@ -56,6 +55,17 @@ exports.dateLineEntry_create = (req, res, next) => {
 
 };
 
+
+/*****************************************
+ * Find dateLineEntries by date_id
+ * RETURNS
+ *  count: number of dateLineEntries
+ *  dateLineEntry: ARRAY of dateLineEntries associated with that date._id
+ *  message
+ *  date information
+ *  error upon failure
+ * 
+ *****************************************/
 exports.dateLineEntry_getEntries = (req, res, next) => {
     const date_id = req.params.dateId;
     DateLineEntry.find({date: date_id })
@@ -109,8 +119,9 @@ exports.update_dateLineEntry = (req, res, next) => {
             // CHECK IF ARRAY IS >= 1
             if (date.length >= 1) {
               return res.status(200).json({
-                date: date,
-                message: "Date updated",
+                date: date.length,
+                dateLineEntry: date,
+                message: "DateLineEntry updated",
               });
             } 
           })
