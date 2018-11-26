@@ -123,7 +123,7 @@ exports.createLocation = (req, res, next) => {
       console.log(JSON.stringify(alocation));
       if(alocation.length >= 1) {
         return res.status(200).json({
-          location: alocation,
+          location: alocation[0],
           message: "Location exists!"
         });
       }
