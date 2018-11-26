@@ -120,8 +120,10 @@ exports.createLocation = (req, res, next) => {
     Location.find({ place_id: req.body.place_id})
     .exec()
     .then(alocation => {
+      console.log(JSON.stringify(alocation));
       if(alocation.length >= 1) {
-        return res.status(409).json({
+        return res.status(200).json({
+          location: alocation,
           message: "Location exists!"
         });
       }
