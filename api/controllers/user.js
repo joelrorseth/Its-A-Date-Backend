@@ -257,8 +257,7 @@ exports.user_login = (req, res, next) => {
             .then(result => {
               console.log(result);
               return res.status(200).json({
-                _id
-                : user[0]._id,
+                _id: user[0]._id,
                 message: "Auth successful",
                 //user: result,   // used for testing. don't send back all user info.
                 token: token
