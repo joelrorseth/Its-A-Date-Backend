@@ -19,7 +19,7 @@ exports.dateLineEntry_create = (req, res, next) => {
         _id: mongoose.Types.ObjectId(),
         date: req.body.date,            // a date id.
         location: req.body.location,    // a location id. 
-        name: req.body.name,
+        nameDLE: req.body.name,
         rating: req.body.rating,
         comments: req.body.comments,
         dateCreated: req.currentDateTime,
@@ -28,7 +28,7 @@ exports.dateLineEntry_create = (req, res, next) => {
     newDateLineEntry
         .save()
         .then(result1 => {
-            //console.log(result1);
+            console.log(result1);
             DateLineEntry.find({date: req.body.date})
                 .select("_id date location nameDLE rating comments dateCreated dateUpdated")
                 .populate( " location ", "nameLocation address rating place_id dateCreated dateLastReferenced")
