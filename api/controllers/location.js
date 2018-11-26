@@ -75,7 +75,35 @@ exports.locationDetail = (req, res, next) => {
     });
 };
 
+/********************************
+ * Gets single location by google place_id
+ * RETURNS:
+ *  location: ARRAY with one location 
+ *  Message
+ *  Error upon failure
+ ********************************/
+exports.locationDetailByPlace_id = (req, res, next) => {
+  const id = req.params.place_id;
 
+  Location.find({ place_id: id })
+        .select("_id place_id nameLocation address rating dateCreated dateLastReferenced")
+        .exec()
+        .then(location => {
+          // CHECK IF ARRAY IS >= 1
+          if (location.length >= 1) {
+            return res.status(200).json({
+              location: location,
+              message: "Date referenced updated and returned single result",
+            });
+          } 
+        })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
+      });
+    });
+};
 
 /*****************************************
  * Create a location

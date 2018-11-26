@@ -46,6 +46,8 @@ router.post("/", dateTime, LocationController.createLocation);
 *******************************************/
 router.get("/:locationId",  dateTime, LocationController.locationDetail);
 
+
+router.get("/place_id/:place_id", dateTime, LocationController.locationDetailByPlace_id);
 /******************************************
 * Delete single location
 * Method:
